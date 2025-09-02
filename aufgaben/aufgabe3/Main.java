@@ -9,6 +9,8 @@ public class Main {
 
 
     public static void main(String[] args) {
+
+        System.err.println("args" + args[0] + args[1]);
         Computer cmp1 = new Computer("performant", 1.4);
         Computer cmp2 = new Computer("langsam", 5.8);
         cmp1.setTaktFrequenz(1.1);
@@ -21,18 +23,5 @@ public class Main {
         this.frequency = taktFrequenz;
     }
 
-    public void setTaktFrequenz(double frequency) {
-
-        if(!this.isFrequencyAllowed(frequency)) {
-            System.out.print("Frequency must be less than " + Computer.FREQUENCY + ". Gotten " + frequency);
-            return;
-        }
-
-        this.frequency = frequency;
-    }
-
-    protected boolean isFrequencyAllowed(double frequency) {
-        return this.frequency < Computer.FREQUENCY;
-    }
 
 }
