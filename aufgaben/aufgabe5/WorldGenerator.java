@@ -1,7 +1,7 @@
 
 import java.util.Random;
 
-public class Generator {
+public class WorldGenerator {
 
     // Eine Grundliste von Blöcken die für die Generierung vorgeseehn wird.
     // Hier kommt jeder bekannte Block Typ einmal rein. 
@@ -12,7 +12,7 @@ public class Generator {
     // Zufalls Generator von Java
     private final Random rnd;
 
-    public Generator(Block[] templateBlocks) {
+    public WorldGenerator(Block[] templateBlocks) {
         this.templateBlocks = templateBlocks;
         this.rnd = new Random();
     }
@@ -21,7 +21,6 @@ public class Generator {
         // Generiert eine zufällige Zahl welche in der Array range bleibt.
         int randomNum = this.rnd.nextInt(this.templateBlocks.length);
         return this.templateBlocks[randomNum].copy();
-
     }
 
     // Erstellt eine leere Welt mit zufällig eingefüllten Blöcken.
