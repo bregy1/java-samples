@@ -71,4 +71,12 @@ public class Player {
 
     }
 
+    public void printInventory() {
+        System.out.println("Player inventory:");
+
+        for(int i = 0; i < this.inventory.size(); i++) {
+            System.out.print(this.inventory.get(i).getClass());
+        }
+    }
+
 }

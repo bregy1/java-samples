@@ -3,9 +3,6 @@
 // Wird verwendet falls kein anderer Block mehr vorhanden ist.
 public class WorldBorderBlock extends Block {
 
-    // Eine Entwicklerfreundliche kurze Beschreibung was der Block darstellt.
-    private static final String DESCRIPTION = "Represents World border which surrounds the map";
-
     // Standard Konstruktor. Am besten immer erfassen.
     public WorldBorderBlock() {
 

@@ -6,15 +6,18 @@ import java.util.HashMap;
 public class World {
 
     // Welt Konfiguration
-    public static final int WORLD_SIZE = 4;
-    public static final int MAX_SLOTS = 1;
-    public static final String WORLD_NAME = "mc-ultimate";
+    private static final int WORLD_SIZE = 5;
+    private static final int MAX_SLOTS = 2;
+    private static final String WORLD_NAME = "mc-ultimate";
 
     // Wird verwendet falls kein anderer Block an einer Stelle gefunden wird.
-    public static final Block PLACEHOLDER_BLOCK = new AirBlock();
-    public static final Block WORLD_BORDER_BLOCK = new WorldBorderBlock();
+    private static final Block PLACEHOLDER_BLOCK = new AirBlock();
+    private static final Block WORLD_BORDER_BLOCK = new WorldBorderBlock();
 
     private static World INSTANCE = null;
+
+    // Used to print an overview of the map :)
+    private final ColorGrid colorGrid = new ColorGrid();
 
     // terrain spiegelt die Grösse wieder
     // terrain ist eine Fixe Grösse darum Array.
@@ -74,7 +77,7 @@ public class World {
         this.players.put(player.getId(), player);
     }
 
-    public void PrintPlayers() {
+    public void printPlayers() {
         System.out.println("Total of " + this.players.size() + " online");
         this.players.forEach((id, player) -> {
             System.out.println(player.getName());
@@ -82,8 +85,8 @@ public class World {
     }
 
     private boolean areCoordsInTerrain(int[] coords) {
-        int x = coords[0];
-        int y = coords[1];
+        int y = coords[0];
+        int x = coords[1];
 
         // überprüfen ob diese Koordinaten sich in unserer Welt befinden
         if (x < 0 || x > (World.WORLD_SIZE - 1)) {
@@ -101,14 +104,14 @@ public class World {
     // Es muss zuerst überprüft werden ob die Koordinaten in "coords" im Raster liegen.
     // Danach wird entweder ein Block ODER ein WorldBorder Block zurückgegeben. Dieser Repräsentiert das "nichts"
     private Block getBlockAt(int[] coords) {
-        int x = coords[0];
-        int y = coords[1];
+        int y = coords[0];
+        int x = coords[1];
 
         if (!this.areCoordsInTerrain(coords)) {
             return World.WORLD_BORDER_BLOCK.copy();
         }
 
-        return this.terrain[x][y];
+        return this.terrain[y][x];
 
     }
 
@@ -118,28 +121,39 @@ public class World {
         return this.getBlockAt(newCoords);
     }
 
+    private String coordsToString(int[] coords) {
+        return coords[0] + ":" + coords[1];
+    }
+
     public Block collectBlock(Player player, Direction direction) {
         int[] coords = this.playerCoords.get(player.getId());
         int[] newCoords = this.moveCoordsIntoDirection(coords, direction);
         Block block = this.getBlockAt(newCoords);
 
         // erlaubt das sammeln des Blocks.
-        if (player.getTool().canCollect(block)) {
+        if (!player.getTool().canCollect(block)) {
             System.out.println("block " + block.getClass() + " cannot be collected by " + player.getTool().getClass());
             return null;
         }
 
-        int x = newCoords[0];
-        int y = newCoords[1];
+        System.out.println("collect block at " + this.coordsToString(newCoords) + " " + block.getClass());
+
+        int y = newCoords[0];
+        int x = newCoords[1];
 
         // Setze einen Placeholder block and die Stelle.
-        this.terrain[x][y] = World.PLACEHOLDER_BLOCK;
+        this.terrain[y][x] = World.PLACEHOLDER_BLOCK;
+
         return block;
     }
 
+    public void print() {
+        this.colorGrid.print(this.terrain, this.playerCoords);
+    }
+
     private int[] moveCoordsIntoDirection(int[] coords, Direction direction) {
-        int x = coords[0];
-        int y = coords[1];
+        int y = coords[0];
+        int x = coords[1];
 
         // Je nach RIchtung die x und y koordinaten des Spielers verändern.
         // Der Spieler bewegt sich hier immer um 1 Block.
@@ -153,7 +167,7 @@ public class World {
             x += 1;
         }
 
-        return new int[]{x, y};
+        return new int[]{y, x};
     }
 
     public boolean movePlayer(String playerId, Direction direction) {
@@ -161,16 +175,17 @@ public class World {
         int[] newCoords = this.moveCoordsIntoDirection(coords, direction);
 
         if (!this.areCoordsInTerrain(newCoords)) {
-            System.out.println("Cannot move " + direction.toString() + "World border reached at" + coords[0] + ":" + coords[1]);
+            System.out.println("Cannot move " + direction.toString() + " -> World border reached at" + this.coordsToString(coords));
             return false;
         }
 
         Block block = this.getBlockAt(newCoords);
         if (!block.isSolid()) {
-            System.out.println("Cannot move " + direction.toString() + "Block is not solid" + coords[0] + ":" + coords[1] + " block type " + block.getClass());
+            System.out.println("Cannot move " + direction.toString() + "-> Block is not solid" + this.coordsToString(coords) + " block type " + block.getClass());
             return false;
         }
 
+        System.out.println("move player to " + this.coordsToString(newCoords));
         // Target Block im Terrain und solide! Neue Koordinaten setzen.
         this.playerCoords.put(playerId, newCoords);
 

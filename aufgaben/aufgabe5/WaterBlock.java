@@ -1,15 +1,15 @@
 
 // Der Luftblock. 
-// Wird verwendet als Platzhalter nachdem ein anderer Block abgebaut wurde.
-public class AirBlock extends Block {
+// Wird verwendet falls kein anderer Block mehr vorhanden ist.
+public class WaterBlock extends Block {
 
-    public AirBlock() {
+    public WaterBlock() {
 
     }
 
     @Override
     public Block copy() {
-        return new AirBlock();
+        return new WaterBlock();
     }
 
     @Override
