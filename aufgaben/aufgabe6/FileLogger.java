@@ -6,11 +6,13 @@ import java.io.IOException;
 public class FileLogger implements ILogger {
 
     private BufferedWriter writer = null;
+    private final String lineSep = System.lineSeparator();
 
     @Override
     public void println(String data) {
         try {
-            this.writer.write(data);
+            this.writer.write(data + this.lineSep);
+            this.writer.flush();
         } catch (IOException ex) {
             System.err.println("Failed to log to file. " + ex.getMessage() + "\nMessage: " + data);
         }
@@ -20,7 +22,8 @@ public class FileLogger implements ILogger {
     @Override
     public void errorln(String error) {
          try {
-            this.writer.write("Error: " + error);
+            this.writer.write("Error: " + error + this.lineSep);
+            this.writer.flush();
         } catch (IOException ex) {
             System.err.println("Failed to log to file. " + ex.getMessage() + "\nError: " + error);
         }
