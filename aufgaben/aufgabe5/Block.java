@@ -14,10 +14,6 @@ public abstract class Block {
     // Gibt an ob man auf einem Block stehen kann,
     public abstract boolean isSolid();
 
-    public void test() {
-        
-    }
-
     // Die Härte des BLocks. Gebraucht um zu entscheiden ob ein Tool den Block abbauen kann.
     public int hardness() {
         return 0;
